@@ -88,37 +88,21 @@ class MeleeEnv:
             
         while True:
             self.gamestate = self.console.step()
-            if self.gamestate.menu_state is melee.Menu.CHARACTER_SELECT:
-                for i in range(len(self.players)):
-                    if self.players[i].agent_type == "AI":
-                        melee.MenuHelper.choose_character(
-                            character=self.players[i].character,
-                            gamestate=self.gamestate,
-                            controller=self.players[i].controller,
-                            costume=i,
-                            swag=False,
-                            start=self.players[i].press_start)
-                    if self.players[i].agent_type == "CPU":
-                        melee.MenuHelper.choose_character(
-                            character=self.players[i].character,
-                            gamestate=self.gamestate,
-                            controller=self.players[i].controller,
-                            costume=i,
-                            swag=False,
-                            cpu_level=self.players[i].lvl,
-                            start=self.players[i].press_start)  
-
-            elif self.gamestate.menu_state is melee.Menu.STAGE_SELECT:
-                melee.MenuHelper.choose_stage(
-                    stage=stage,
+            for i in range(2):
+                melee.MenuHelper.menu_helper_simple(
                     gamestate=self.gamestate,
-                    controller=self.players[self.menu_control_agent].controller)
+                    controller=self.players[i].controller,
+                    character_selected=self.players[i].character,
+                    stage_selected=stage,
+                    connect_code="",
+                    cpu_level=0,
+                    costume=0,
+                    autostart=True,
+                    swag=False
+                )
 
-            elif self.gamestate.menu_state in [melee.Menu.IN_GAME, melee.Menu.SUDDEN_DEATH]:
-                return self.gamestate, False  # game is not done on start
-                
-            else:
-                melee.MenuHelper.choose_versus_mode(self.gamestate, self.players[self.menu_control_agent].controller)
+            if self.gamestate.menu_state in [melee.Menu.IN_GAME, melee.Menu.SUDDEN_DEATH]:
+                return self.gamestate, False
 
     def step(self):
         stocks = np.array([self.gamestate.players[i].stock for i in list(self.gamestate.players.keys())])
