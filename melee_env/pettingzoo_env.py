@@ -15,9 +15,9 @@ from melee_env.agents.spaces_util import observation_space, action_space, execut
 class MeleeEnv(pz.ParallelEnv):
     metadata = {"render_modes": ["human"], "name": "Melee_v0"}
 
-    def __init__(self, 
-        iso_path,
+    def __init__(self,
         players,
+        iso_path,
         fast_forward=False, 
         blocking_input=True,
         ai_starts_game=True):
