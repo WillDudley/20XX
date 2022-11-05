@@ -147,4 +147,22 @@ class MeleeEnv(pz.ParallelEnv):
 
         if self.gamestate.menu_state in [melee.Menu.IN_GAME, melee.Menu.SUDDEN_DEATH]:
             self.gamestate = self.console.step()
-        return self.gamestate, done
+
+        x_positions = [self.gamestate.players[i].position.x for i in list(self.gamestate.players.keys())]
+        y_positions = [self.gamestate.players[i].position.y for i in list(self.gamestate.players.keys())]
+        actions = [self.gamestate.players[i].action.value for i in list(self.gamestate.players.keys())]
+        action_frames = [self.gamestate.players[i].action_frame for i in list(self.gamestate.players.keys())]
+        hitstun_frames_left = [self.gamestate.players[i].hitstun_frames_left for i in list(self.gamestate.players.keys())]
+        stocks = [self.gamestate.players[i].stock for i in list(self.gamestate.players.keys())]
+
+        obs = np.array([x_positions, y_positions, actions, action_frames, hitstun_frames_left, stocks])
+
+        reward = 0
+
+        terminated = done
+
+        truncated = 0
+
+        infos = {"gamestate": self.gamestate}
+
+        return obs, reward, terminated, truncated, infos
