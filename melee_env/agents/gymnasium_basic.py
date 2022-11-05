@@ -1,7 +1,7 @@
 from melee import enums
 from melee_env.agents.spaces_util import observation_space, action_space, execute_action
 
-class MyAgent:
+class CPUFox:
     def __init__(self, press_start=False):
         self.agent_type = "CPU"
         self.controller = None
