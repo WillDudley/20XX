@@ -1,3 +1,6 @@
+Originally forked from https://github.com/davidtjones/melee-env
+
+
 melee-env
 ---
 melee-env wraps the fantastic [libmelee](https://github.com/altf4/libmelee) as a more gym-esque environment with less boilerplate and setup. Additionally, melee-env provides a convenient and highly flexible framework for creating your own agents. For more information on these topics and melee-env, see the [README](melee_env/agents/README.md) in the agents folder.
