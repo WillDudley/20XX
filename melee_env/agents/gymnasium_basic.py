@@ -28,8 +28,9 @@ class RandomFox:
         self.current_frame = 0
         self.character = enums.Character.FOX
         self.action_space = action_space
+        self.lvl = 9
 
     def act(self, gamestate):
         action = self.action_space.sample()
-        execute_action(action)
+        execute_action(action, self.controller)
         return action
