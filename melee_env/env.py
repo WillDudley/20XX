@@ -95,7 +95,7 @@ class MeleeEnv:
                     character_selected=self.players[i].character,
                     stage_selected=stage,
                     connect_code="",
-                    cpu_level=0,
+                    cpu_level=9 if i==1 else 0,
                     costume=0,
                     autostart=True,
                     swag=False

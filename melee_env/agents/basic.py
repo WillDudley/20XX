@@ -36,7 +36,6 @@ class Human(Agent):
 class CPU(AgentChooseCharacter):
     def __init__(self, character, lvl, press_start=False):
         super().__init__(character, press_start)
-        self.agent_type = "CPU"
         if not 1 <= lvl <= 9:
             raise ValueError(f"CPU Level must be 1-9. Got {lvl}")
         self.lvl = lvl
@@ -56,6 +55,7 @@ class NOOP(AgentChooseCharacter):
 class Random(AgentChooseCharacter):
     def __init__(self, character, press_start=False):
         super().__init__(character, press_start)
+        self.lvl = 0
         self.action_space = ActionSpace()
     
     @from_action_space
@@ -66,6 +66,7 @@ class Random(AgentChooseCharacter):
 class Shine(Agent):
     def __init__(self):
         super().__init__()
+        self.lvl = 0
         self.character = enums.Character.FOX
     
     def act(self, gamestate):
