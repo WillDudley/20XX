@@ -32,5 +32,5 @@ class RandomFox:
 
     def act(self, gamestate):
         action = self.action_space.sample()
-        execute_action(action, self.controller)
+        # execute_action(action, self.controller)
         return action

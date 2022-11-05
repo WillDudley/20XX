@@ -136,7 +136,12 @@ class MeleeEnv(pz.ParallelEnv):
         time.sleep(2)
 
     def step(self, actions=None):
-        assert actions is None, "Actions are handled in an OOP way."
+        assert actions is not None, "Actions are handled in an OOP way."
+
+        for i in range(2):
+            if actions[i] is not None:
+                execute_action(actions[i], self.players[i].controller)
+
         stocks = np.array([self.gamestate.players[i].stock for i in list(self.gamestate.players.keys())])
         done = not np.sum(stocks[np.argsort(stocks)][::-1][1:])
 
