@@ -5,12 +5,12 @@ from melee_env.agents.util import *
 import code
 
 class Agent(ABC):
-    def __init__(self):
+    def __init__(self, press_start=False):
         self.agent_type = "AI"
         self.controller = None
         self.port = None  # this is also in controller, maybe redundant?
         self.action = 0
-        self.press_start = False
+        self.press_start = press_start
         self.self_observation = None
         self.current_frame = 0
 
@@ -19,8 +19,8 @@ class Agent(ABC):
         pass
 
 class AgentChooseCharacter(Agent):
-    def __init__(self, character):
-        super().__init__()
+    def __init__(self, character, press_start=False):
+        super().__init__(press_start)
         self.character = character
         
 
@@ -34,8 +34,8 @@ class Human(Agent):
 
 
 class CPU(AgentChooseCharacter):
-    def __init__(self, character, lvl):
-        super().__init__(character)
+    def __init__(self, character, lvl, press_start=False):
+        super().__init__(character, press_start)
         self.agent_type = "CPU"
         if not 1 <= lvl <= 9:
             raise ValueError(f"CPU Level must be 1-9. Got {lvl}")
@@ -46,16 +46,16 @@ class CPU(AgentChooseCharacter):
 
 
 class NOOP(AgentChooseCharacter):
-    def __init__(self, character):
-        super().__init__(character)
+    def __init__(self, character, press_start=False):
+        super().__init__(character, press_start)
 
     def act(self, gamestate):
         self.action = 0
 
 
 class Random(AgentChooseCharacter):
-    def __init__(self, character):
-        super().__init__(character)
+    def __init__(self, character, press_start=False):
+        super().__init__(character, press_start)
         self.action_space = ActionSpace()
     
     @from_action_space
