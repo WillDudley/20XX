@@ -118,7 +118,7 @@ class MeleeEnv(pz.ParallelEnv):
                     character_selected=self.players[i].character,
                     stage_selected=stage,
                     connect_code="",
-                    cpu_level=9 if i==1 else 0,
+                    cpu_level=self.players[i].lvl,
                     costume=0,
                     autostart=True,
                     swag=False
