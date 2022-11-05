@@ -35,7 +35,7 @@ class MeleeEnv:
         self.gamestate = None
 
 
-    def start(self):
+    def start_emulator(self):
         if sys.platform == "linux":
             dolphin_home_path = str(self.d.slippi_home)+"/"
         elif sys.platform == "win32":
@@ -82,7 +82,7 @@ class MeleeEnv:
 
         self.gamestate = self.console.step()
  
-    def setup(self, stage):
+    def reset(self, stage):
         for player in self.players:
             player.defeated = False
             

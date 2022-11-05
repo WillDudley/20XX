@@ -2,7 +2,8 @@ melee-env
 ---
 melee-env wraps the fantastic [libmelee](https://github.com/altf4/libmelee) as a more gym-esque environment with less boilerplate and setup. Additionally, melee-env provides a convenient and highly flexible framework for creating your own agents. For more information on these topics and melee-env, see the [README](melee_env/agents/README.md) in the agents folder.
 
-### Code example: 
+### Code example:
+
 ```python
 from melee import enums
 from melee_env.env import MeleeEnv
@@ -13,11 +14,12 @@ players = [Rest(), NOOP(enums.Character.FOX)]
 
 env = MeleeEnv('path/to/iso', players, fast_forward=True)
 
-episodes = 10; reward = 0
-env.start()
+episodes = 10;
+reward = 0
+env.start_emulator()
 
 for episode in range(episodes):
-    gamestate, done = env.setup(enums.Stage.BATTLEFIELD)
+    gamestate, done = env.reset(enums.Stage.BATTLEFIELD)
     while not done:
         for i in range(len(players)):
             players[i].act(gamestate)

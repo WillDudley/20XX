@@ -14,10 +14,10 @@ players = [Rest(), NOOP(enums.Character.FOX)]
 env = MeleeEnv(args.iso, players, fast_forward=True)
 
 episodes = 10; reward = 0
-env.start()
+env.start_emulator()
 
 for episode in range(episodes):
-    gamestate, done = env.setup(enums.Stage.BATTLEFIELD)
+    gamestate, done = env.reset(enums.Stage.BATTLEFIELD)
     while not done:
         for i in range(len(players)):
             players[i].act(gamestate)
