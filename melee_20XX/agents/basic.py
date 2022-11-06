@@ -1,5 +1,5 @@
 from melee import enums
-from melee_env.env.spaces import action_space
+from melee_20XX.env.spaces import action_space
 
 
 class CPUFox:
