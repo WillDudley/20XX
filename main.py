@@ -1,8 +1,8 @@
 import os.path
 import melee
 
-from melee_env.pettingzoo_env import MeleeEnv
-from melee_env.agents.gymnasium_basic import CPUFox, RandomFox
+from melee_env.env import MeleeEnv
+from melee_env.agents.basic import CPUFox, RandomFox
 
 players = [RandomFox(), CPUFox()]
 

@@ -1,19 +1,28 @@
+import functools
+
+from gymnasium import spaces
+
 from melee_env.dconfig import DolphinConfig
 import melee
 from melee import enums
 import numpy as np
 import sys
 import time
+import pettingzoo as pz
+from melee_env.agents.spaces_util import observation_space, action_space, execute_action
 
 
-class MeleeEnv:
-    def __init__(self, 
-        iso_path,
+class MeleeEnv(pz.ParallelEnv):
+    metadata = {"render_modes": ["human"], "name": "Melee_v0"}
+
+    def __init__(self,
         players,
+        iso_path,
         fast_forward=False, 
         blocking_input=True,
         ai_starts_game=True):
 
+        # ---- EMULATOR STUFF ----
         self.d = DolphinConfig()
         self.d.set_ff(fast_forward)
 
@@ -33,6 +42,8 @@ class MeleeEnv:
         self.ai_starts_game = ai_starts_game
 
         self.gamestate = None
+
+        # ---- OTHER STUFF ----
 
 
     def start_emulator(self):
@@ -81,6 +92,18 @@ class MeleeEnv:
         [player.controller.connect() for player in self.players if player is not None]
 
         self.gamestate = self.console.step()
+
+
+    @functools.lru_cache(maxsize=None)
+    def observation_space(self, agent: str) -> spaces.Space:
+        return observation_space
+
+    @functools.lru_cache(maxsize=None)
+    def action_space(self, agent: str) -> spaces.Space:
+        return action_space
+
+    def render(self) -> None:
+        raise NotImplementedError("Rendering is implicitly handled by Dolphin - do not call this method. In the future we could disable rendering via https://github.com/altf4/libmelee/issues/87")
  
     def reset(self, stage):
         for player in self.players:
@@ -95,23 +118,26 @@ class MeleeEnv:
                     character_selected=self.players[i].character,
                     stage_selected=stage,
                     connect_code="",
-                    cpu_level=9 if i==1 else 0,
+                    cpu_level=self.players[i].lvl,
                     costume=0,
                     autostart=True,
                     swag=False
                 )
 
             if self.gamestate.menu_state in [melee.Menu.IN_GAME, melee.Menu.SUDDEN_DEATH]:
-                return self.gamestate, False
+                x_positions = [self.gamestate.players[i].position.x for i in list(self.gamestate.players.keys())]
+                y_positions = [self.gamestate.players[i].position.y for i in list(self.gamestate.players.keys())]
+                actions = [self.gamestate.players[i].action.value for i in list(self.gamestate.players.keys())]
+                action_frames = [self.gamestate.players[i].action_frame for i in list(self.gamestate.players.keys())]
+                hitstun_frames_left = [self.gamestate.players[i].hitstun_frames_left for i in
+                                       list(self.gamestate.players.keys())]
+                stocks = [self.gamestate.players[i].stock for i in list(self.gamestate.players.keys())]
 
-    def step(self):
-        stocks = np.array([self.gamestate.players[i].stock for i in list(self.gamestate.players.keys())])
-        done = not np.sum(stocks[np.argsort(stocks)][::-1][1:])
+                obs = np.array([x_positions, y_positions, actions, action_frames, hitstun_frames_left, stocks])
 
-        if self.gamestate.menu_state in [melee.Menu.IN_GAME, melee.Menu.SUDDEN_DEATH]:
-            self.gamestate = self.console.step()
-        return self.gamestate, done
+                info = {"gamestate": self.gamestate}
 
+                return obs, info
 
     def close(self):
         for t, c in self.controllers.items():
@@ -119,4 +145,36 @@ class MeleeEnv:
         self.observation_space._reset()
         self.gamestate = None
         self.console.stop()
-        time.sleep(2) 
+        time.sleep(2)
+
+    def step(self, actions=None):
+        assert actions is not None, "Actions are handled in an OOP way."
+
+        for i in range(2):
+            if actions[i] is not None:
+                execute_action(actions[i], self.players[i].controller)
+
+        stocks = np.array([self.gamestate.players[i].stock for i in list(self.gamestate.players.keys())])
+        done = not np.sum(stocks[np.argsort(stocks)][::-1][1:])
+
+        if self.gamestate.menu_state in [melee.Menu.IN_GAME, melee.Menu.SUDDEN_DEATH]:
+            self.gamestate = self.console.step()
+
+        x_positions = [self.gamestate.players[i].position.x for i in list(self.gamestate.players.keys())]
+        y_positions = [self.gamestate.players[i].position.y for i in list(self.gamestate.players.keys())]
+        actions = [self.gamestate.players[i].action.value for i in list(self.gamestate.players.keys())]
+        action_frames = [self.gamestate.players[i].action_frame for i in list(self.gamestate.players.keys())]
+        hitstun_frames_left = [self.gamestate.players[i].hitstun_frames_left for i in list(self.gamestate.players.keys())]
+        stocks = [self.gamestate.players[i].stock for i in list(self.gamestate.players.keys())]
+
+        obs = np.array([x_positions, y_positions, actions, action_frames, hitstun_frames_left, stocks])
+
+        reward = 0
+
+        terminated = done
+
+        truncated = 0
+
+        infos = {"gamestate": self.gamestate}
+
+        return obs, reward, terminated, truncated, infos
