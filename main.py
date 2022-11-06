@@ -1,12 +1,12 @@
 import os.path
 import melee
 
-from melee_env.env import MeleeEnv
+from melee_env import Melee_v0
 from melee_env.agents.basic import CPUFox, RandomFox
 
 players = [RandomFox(), CPUFox()]
 
-env = MeleeEnv(players, os.path.expanduser('~/.melee/SSBM.ciso'), fast_forward=True)
+env = Melee_v0.env(players, os.path.expanduser('~/.melee/SSBM.ciso'), fast_forward=True)
 
 max_episodes = 10
 

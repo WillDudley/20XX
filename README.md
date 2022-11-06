@@ -9,13 +9,13 @@ melee-env wraps the fantastic [libmelee](https://github.com/altf4/libmelee) as a
 
 ```python
 from melee import enums
-from melee_env.env import MeleeEnv
+from melee_env.env.env import env
 from melee_env.agents.basic import *
 import argparse
 
 players = [Rest(), NOOP(enums.Character.FOX)]
 
-env = MeleeEnv('path/to/iso', players, fast_forward=True)
+env = env('path/to/iso', players, fast_forward=True)
 
 episodes = 10;
 reward = 0
