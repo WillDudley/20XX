@@ -1,5 +1,6 @@
 from melee import enums
-from melee_env.agents.spaces_util import observation_space, action_space, execute_action
+from melee_env.env.spaces import action_space
+
 
 class CPUFox:
     def __init__(self, press_start=False):
